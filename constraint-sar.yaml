@@ -10,8 +10,10 @@ spec:
     namespaces:
       - "ggmtest"
   parameters:
-    apiServerURL: https://api.gmontero46.devcluster.openshift.com:6443/apis/authorization.k8s.io/v1/subjectaccessreviews
-    bearerTokenHeader: Bearer sha256~dEwUNKvMvKEeKqK_5a4mLnYlw5fY0Xf7iu6AOJc1rko
+    # UDPATE with your cluster's URL
+    apiServerURL: https://<your api server external host and https port>/apis/authorization.k8s.io/v1/subjectaccessreviews
+    # UPDATE with a token from your cluster that can create SARS ...
+    bearerTokenHeader: Bearer you-actual-token
     sarVerb: get
     sarGroup: tekton.dev
     sarResource: clustertasks
