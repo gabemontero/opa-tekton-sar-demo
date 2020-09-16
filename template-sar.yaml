@@ -1,0 +1,91 @@
+apiVersion: templates.gatekeeper.sh/v1beta1
+kind: ConstraintTemplate
+metadata:
+  name: tektonclustertaskallowedserviceaccounts
+spec:
+  crd:
+    spec:
+      names:
+        kind: TektonClusterTaskAllowedServiceAccounts
+        listKind: TektonClusterTaskAllowedServiceAccountsList
+        plural: tektonclustertaskallowedserviceaccounts
+        singular: tektonclustertaskallowedserviceaccounts
+      validation:
+        # Schema for the `parameters` field
+        openAPIV3Schema:
+          properties:
+            apiServerURL:
+              type: string
+            bearerTokenHeader:
+              type: string
+            sarVerb:
+              type: string
+            sarGroup:
+              type: string
+            sarResource:
+              type: string
+            sarResourceName:
+              type: string
+            taskRef:
+              type: object
+              properties:
+                name:
+                  type: string
+                kind:
+                  type: string
+  targets:
+    - target: admission.k8s.gatekeeper.sh
+      rego: |
+        package tektonclustertaskallowedserviceaccounts
+
+        #import data.kubernetes.lib
+
+        sar_raw(user) = output {
+           body := {
+              "apiVersion": "authorization.k8s.io/v1",
+              "kind": "SubjectAccessReview",
+              "spec": {
+                "resourceAttributes": {
+                  "apiVersion": "authorization.k8s.io/v1",
+                  "kind": "ResourceAttributes",
+                  "verb": input.parameters.sarVerb,
+                  "group": input.parameters.sarGroup,
+                  "name": input.parameters.sarResourceName,
+                  "resource": input.parameters.sarResource,
+                },
+                "user": user,
+              },
+           }
+
+           req := {
+              "method": "post",
+              "url": input.parameters.apiServerURL,
+              "headers": {"Content-Type": "application/json", "Authorization": input.parameters.bearerTokenHeader},
+              # eventually allow for injenction of api server cert
+              "tls_insecure_skip_verify": true,
+              "body": body,
+           }
+
+           http.send(req, output)
+        }
+
+        sar_allowed(user) = allowed {
+            output := sar_raw(user)
+            output.status_code == 201
+            allowed = output.body.status.allowed
+        }
+
+        violation[{"msg": msg, "details": {}}] {
+            sa := input_serviceaccountname[_]
+            user := sprintf("system:serviceaccount:%v:%v",[input.review.object.metadata.namespace, sa.serviceAccountName])
+            not sar_allowed(user)
+            msg := sprintf("ServiceAccount %s user %v is not allowed to use ClusterTask %v, TaskRun: %v"  , [sa.serviceAccountName, user, input.parameters.taskRef, input.review.object.metadata.name])
+        }
+        input_serviceaccountname[s] {
+            s := input.review.object.spec
+            has_field(s, "serviceAccountName")
+        }
+        # has_field returns whether an object has a field
+        has_field(object, field) = true {
+            object[field]
+        }

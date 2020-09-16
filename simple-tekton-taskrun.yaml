@@ -1,0 +1,10 @@
+apiVersion: tekton.dev/v1alpha1
+kind: TaskRun
+metadata:
+  name: echo-hello-world-task-run
+spec:
+  # default has access per 201-clusterrolebinding.yaml, builder does not
+  serviceAccountName: default
+  taskRef:
+    name: echo-hello-world
+    kind: ClusterTask

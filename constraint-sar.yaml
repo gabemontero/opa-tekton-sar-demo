@@ -1,0 +1,21 @@
+apiVersion: constraints.gatekeeper.sh/v1beta1
+kind: TektonClusterTaskAllowedServiceAccounts
+metadata:
+  name: taskrun-serviceaccount-allowed-clustertask
+spec:
+  match:
+    kinds:
+      - apiGroups: ["tekton.dev"]
+        kinds: ["TaskRun"]
+    namespaces:
+      - "ggmtest"
+  parameters:
+    apiServerURL: https://api.gmontero46.devcluster.openshift.com:6443/apis/authorization.k8s.io/v1/subjectaccessreviews
+    bearerTokenHeader: Bearer sha256~dEwUNKvMvKEeKqK_5a4mLnYlw5fY0Xf7iu6AOJc1rko
+    sarVerb: get
+    sarGroup: tekton.dev
+    sarResource: clustertasks
+    sarResourceName: echo-hello-world
+    taskRef:
+      name: echo-hello-world
+      kind: ClusterTask
