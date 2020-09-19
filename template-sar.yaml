@@ -60,7 +60,7 @@ spec:
            req := {
               "method": "post",
               "url": input.parameters.apiServerURL,
-              "headers": {"Content-Type": "application/json", "Authorization": input.parameters.bearerTokenHeader},
+              "headers": {"Content-Type": "application/json", "Authorization": sprintf("Bearer %v", [input.parameters.bearerTokenHeader])},
               # eventually allow for injenction of api server cert
               "tls_insecure_skip_verify": true,
               "body": body,
