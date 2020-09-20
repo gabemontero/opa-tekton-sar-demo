@@ -10,10 +10,9 @@ spec:
     namespaces:
       - "opa-tekton-sar-demo"
   parameters:
-    # UDPATE with your cluster's URL
-    apiServerURL: https://<your api server external host and https port>/apis/authorization.k8s.io/v1/subjectaccessreviews
+    apiServerURL: https://kubernetes.default.svc.cluster.local/apis/authorization.k8s.io/v1/subjectaccessreviews
     # UPDATE with a token from your cluster that can create SARS ...
-    bearerTokenHeader: Bearer you-actual-token
+    bearerTokenHeader: <Your_Bearer_Token>
     sarVerb: get
     sarGroup: tekton.dev
     sarResource: clustertasks

@@ -22,7 +22,7 @@ approaches for each)
 - run `oc new-project opa-tekton-sar-demo`
 - run `oc apply -f ./201-clusterrolebinding.yaml`
 - run `oc apply -f ./template-sar.yaml`
-- update `constraint-sar.yaml` with the URL and token from your cluster, then run `oc apply -f ./constraint-sar.yaml`
+- update `constraint-sar.yaml` bearer token from your cluster, then run `oc apply -f ./constraint-sar.yaml`
 - run `oc apply -f ./simple-tekton-task.yaml`
 
 Now, for actually creating the `TaskRun`, if the `simple-tekton-taskrun.yaml` file uses `default` for the `serviceAccountName`
