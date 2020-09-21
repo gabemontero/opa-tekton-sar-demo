@@ -19,18 +19,18 @@ To run this POC / Demo from with OpenShift Container Platform, the non-variable 
 
 - Deploy Tekton Pipelines and OPA Gatekeeper (this repo does not proscribe how you do that, as there are varying
 approaches for each)
-- run `oc new-project ggmtest`
+- run `oc new-project opa-tekton-sar-demo`
 - run `oc apply -f ./201-clusterrolebinding.yaml`
 - run `oc apply -f ./template-sar.yaml`
-- update `constraint-sar.yaml` with the URL and token from your cluster, then run `oc apply -f ./constraint-sar.yaml`
+- update `constraint-sar.yaml` bearer token from your cluster, then run `oc apply -f ./constraint-sar.yaml`
 - run `oc apply -f ./simple-tekton-task.yaml`
 
-Now, for actually creating the `TaskRun`, if the `simple-tekton-tasrun.yaml` file uses `default` for the `serviceAccountName`
+Now, for actually creating the `TaskRun`, if the `simple-tekton-taskrun.yaml` file uses `default` for the `serviceAccountName`
 the `TaskRun` will be allowed to be created.
 
 If you switch to `builder` for `serviceAccountName` you'll get on `TaskRun` creation the a message like:
 
 ```bash
-$ oc apply -f ../simple-tekton-taskrun.yaml 
-Error from server ([denied by taskrun-serviceaccount-allowed-clustertask] ServiceAccount builder user system:serviceaccount:ggmtest:builder is not allowed to use ClusterTask {"kind": "ClusterTask", "name": "echo-hello-world"}, TaskRun: echo-hello-world-task-run): error when creating "../simple-tekton-taskrun.yaml": admission webhook "validation.gatekeeper.sh" denied the request: [denied by taskrun-serviceaccount-allowed-clustertask] ServiceAccount builder user system:serviceaccount:ggmtest:builder is not allowed to use ClusterTask {"kind": "ClusterTask", "name": "echo-hello-world"}, TaskRun: echo-hello-world-task-run
+$ oc apply -f ./simple-tekton-taskrun.yaml 
+Error from server ([denied by taskrun-serviceaccount-allowed-clustertask] ServiceAccount builder user system:serviceaccount:ggmtest:builder is not allowed to use ClusterTask {"kind": "ClusterTask", "name": "echo-hello-world"}, TaskRun: echo-hello-world-task-run): error when creating "../simple-tekton-taskrun.yaml": admission webhook "validation.gatekeeper.sh" denied the request: [denied by taskrun-serviceaccount-allowed-clustertask] ServiceAccount builder user system:serviceaccount:opa-tekton-sar-demo:builder is not allowed to use ClusterTask {"kind": "ClusterTask", "name": "echo-hello-world"}, TaskRun: echo-hello-world-task-run
 ```

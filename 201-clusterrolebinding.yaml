@@ -1,12 +1,11 @@
-
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRoleBinding
 metadata:
-  name: ggmtest-cluster-access
+  name: opa-tekton-sar-demo-cluster-access
 subjects:
   - kind: ServiceAccount
     name: default
-    namespace: ggmtest
+    namespace: opa-tekton-sar-demo
 roleRef:
   kind: ClusterRole
   name: tekton-pipelines-controller-cluster-access
