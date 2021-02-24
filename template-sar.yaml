@@ -46,8 +46,6 @@ spec:
               "kind": "SubjectAccessReview",
               "spec": {
                 "resourceAttributes": {
-                  "apiVersion": "authorization.k8s.io/v1",
-                  "kind": "ResourceAttributes",
                   "verb": input.parameters.sarVerb,
                   "group": input.parameters.sarGroup,
                   "name": input.parameters.sarResourceName,
